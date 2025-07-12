@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roleta de PrÃªmios Luciano Iphone</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://i.postimg.cc/Bbcw1fyj/Chat-GPT-Image-11-de-jul-de-2025-22-55-30.png') no-repeat center center fixed;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #fff;
+      user-select: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #name {
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      border: 3px solid #1E3A8A;
+      animation: blink 1s infinite alternate;
+      background-color: #1E3A8A;
+      color: white;
+    }
+
+    @keyframes blink {
+      0% {
+        background-color: #1E3A8A;
+        color: white;
+      }
+      100% {
+        background-color: #FFFFFF;
+        color: #1E3A8A;
+      }
+    }
+
+    .roleta-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      aspect-ratio: 1;
+    }
+
+    #wheelCanvas {
+      border-radius: 50%;
+      box-shadow: 0 0 15px #0000ff;
+      background-color: #222;
+      width: 100%;
+      height: 100%;
+    }
+
+    #pointer {
+      width: 0;
+      height: 0;
+      border-left: 25px solid transparent;
+      border-right: 25px solid transparent;
+      border-bottom: 40px solid red;
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%) rotate(180deg);
+      z-index: 10;
+      filter: drop-shadow(0 0 3px red);
+    }
+
+    #spinBtn {
+      margin-top: 30px;
+      padding: 15px 40px;
+      font-size: 22px;
+      background-color: #28a745;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      color: white;
+      box-shadow: 0 0 8px #28a745;
+    }
+
+    #spinBtn:disabled {
+      background-color: gray;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 26px;
+      font-weight: bold;
+      padding: 15px 30px;
+      border-radius: 12px;
+      display: inline-block;
+      min-width: 280px;
+      user-select: none;
+    }
+
+    #result.prize {
+      background-color: #28a745;
+      color: #fff;
+      box-shadow: 0 0 15px #28a745;
+    }
+
+    #result.pass {
+      background-color: #dc3545;
+      color:#fff;
+      box-shadow: 0 0 15px #dc3545;
+    }
+
+    /* âœ… Novo estilo: mensagem de "jÃ¡ girou" com fundo preto */
+    #result.already {
+      background-color: #000;
+      color: #fff;
+      box-shadow: 0 0 15px #000;
+    }
+
+    @media (max-width: 600px) {
+      .roleta-container {
+        width: 80%;
+      }
+
+      #name {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      #spinBtn {
+        font-size: 18px;
+        padding: 10px 30px;
+      }
+
+      #result {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="name">LUCIANO IPHONE</div>
+    <br>
+    <br>
+
+
+
+    <div class="roleta-container">
+      <div id="pointer"></div>
+      <canvas id="wheelCanvas" width="500" height="500"></canvas>
+    </div>
+    
+    <button id="spinBtn">í¾¯ Girar</button>
+    <div id= "result" >Clique em Girar para tentar a sorte!</div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/zarocknz/javascript-winwheel/Winwheel.min.js"></script>
+
+  <script>
+    let jaGirou = localStorage.getItem('jaGirou') === 'true';
+
+    const segmentTexts = [
+      "Carregador Turbo",
+      "Passou a vez",
+      "PelÃ­cula",
+      "Passou a vez",
+      "Fone Bluetooth",
+      "Capinha",
+      "10% desconto",
+      "iPhone"
+    ];
+
+    const segmentColors = [
+      "#1E3A8A", "#FFFFFF",
+      "#1E3A8A", "#FFFFFF",
+      "#1E3A8A", "#FFFFFF",
+      "#1E3A8A", "#FFFFFF"
+    ];
+
+    let segments = [];
+    for (let i = 0; i < 8; i++) {
+      segments.push({
+        fillStyle: segmentColors[i],
+        text: segmentTexts[i]
+      });
+    }
+
+    const wheel = new Winwheel({
+      canvasId: 'wheelCanvas',
+      numSegments: 8,
+      outerRadius: 230,
+      textFontSize: 18,
+      textOrientation: 'horizontal',
+      textAlignment: 'outer',
+      segments: segments,
+      animation: {
+        type: 'spinToStop',
+        duration: 5,
+        spins: 7,
+        callbackFinished: function(segment){
+          const resultDiv = document.getElementById('result');
+          if(segment.text === "Passou a vez"){
+            resultDiv.textContent = "Passou a vez!";
+            resultDiv.className = 'pass';
+          } else if (segment.text === "iPhone") {
+            resultDiv.textContent = "Que pena! Quase ganhou o iPhone! í¸¬";
+            resultDiv.className = 'pass';
+          } else {
+            resultDiv.textContent = "ParabÃ©ns! VocÃª ganhou: " + segment.text;
+            resultDiv.className = 'prize';
+          }
+
+          document.getElementById('spinBtn').disabled = true;
+          localStorage.setItem('jaGirou', 'true');
+        }
+      }
+    });
+
+    if (jaGirou) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = 'VocÃª jÃ¡ girou a roleta.';
+      resultDiv.className = 'already'; // âœ… Aqui aplicamos o estilo de fundo preto
+      document.getElementById('spinBtn').disabled = true;
+    }
+
+    document.getElementById('spinBtn').addEventListener('click', () => {
+      if (jaGirou) return;
+
+      document.getElementById('spinBtn').disabled = true;
+      const rand = Math.random();
+
+      let prize;
+      if(rand < 0.10) prize = "Carregador Turbo";
+      else if(rand < 0.20) prize = "PelÃ­cula";
+      else if(rand < 0.30) prize = "Fone Bluetooth";
+      else if(rand < 0.40) prize = "Capinha";
+      else if(rand < 0.50) prize = "10% desconto";
+      else prize = "Passou a vez";
+
+      let segmentIndex;
+      if (prize === "Passou a vez") {
+        const passIndexes = segmentTexts
+          .map((text, idx) => text === "Passou a vez" ? idx + 1 : null)
+          .filter(idx => idx !== null);
+        segmentIndex = passIndexes[Math.floor(Math.random() * passIndexes.length)];
+      } else {
+        segmentIndex = wheel.segments.findIndex(s => s.text === prize) + 1;
+      }
+
+      wheel.stopAnimation(false);
+      wheel.rotationAngle = 0;
+      wheel.draw();
+
+      const stopAt = wheel.getRandomForSegment(segmentIndex);
+      wheel.animation.stopAngle = stopAt;
+      wheel.startAnimation();
+    });
+  </script>
+</body>
+</html>
+
